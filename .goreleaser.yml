@@ -1,0 +1,80 @@
+project_name: contentful-cli
+
+release:
+  github:
+    owner: foomo
+    name: contentful-cli
+  prerelease: auto
+
+changelog:
+  use: github-native
+
+dockers:
+  - use: buildx
+    goos: linux
+    goarch: amd64
+    dockerfile: Dockerfile
+    image_templates:
+      - '{{ if eq .Prerelease "" }}foomo/{{.ProjectName}}:latest-amd64{{ end }}'
+      - 'foomo/{{.ProjectName}}:{{ .Version }}-amd64'
+      - '{{ if eq .Prerelease "" }}foomo/{{.ProjectName}}:{{ .Major }}-amd64{{ end }}'
+      - '{{ if eq .Prerelease "" }}foomo/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}-amd64{{ end }}'
+    build_flag_templates:
+      - '--pull'
+      # https://github.com/opencontainers/image-spec/blob/main/annotations.md#pre-defined-annotation-keys
+      - '--label=org.opencontainers.image.title={{.ProjectName}}'
+      - '--label=org.opencontainers.image.description=Dockerized contentful-cli'
+      - '--label=org.opencontainers.image.source={{.GitURL}}'
+      - '--label=org.opencontainers.image.url={{.GitURL}}'
+      - '--label=org.opencontainers.image.documentation={{.GitURL}}'
+      - '--label=org.opencontainers.image.created={{.Date}}'
+      - '--label=org.opencontainers.image.revision={{.FullCommit}}'
+      - '--label=org.opencontainers.image.version={{.Version}}'
+      - '--platform=linux/amd64'
+
+  - use: buildx
+    goos: linux
+    goarch: arm64
+    dockerfile: build/buildx.Dockerfile
+    image_templates:
+      - '{{ if eq .Prerelease "" }}foomo/{{.ProjectName}}:latest-arm64{{ end }}'
+      - 'foomo/{{.ProjectName}}:{{ .Version }}-arm64'
+      - '{{ if eq .Prerelease "" }}foomo/{{.ProjectName}}:{{ .Major }}-arm64{{ end }}'
+      - '{{ if eq .Prerelease "" }}foomo/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}-arm64{{ end }}'
+    build_flag_templates:
+      - '--pull'
+      # https://github.com/opencontainers/image-spec/blob/main/annotations.md#pre-defined-annotation-keys
+      - '--label=org.opencontainers.image.title={{.ProjectName}}'
+      - '--label=org.opencontainers.image.description=Dockerized contentful-cli'
+      - '--label=org.opencontainers.image.source={{.GitURL}}'
+      - '--label=org.opencontainers.image.url={{.GitURL}}'
+      - '--label=org.opencontainers.image.documentation={{.GitURL}}'
+      - '--label=org.opencontainers.image.created={{.Date}}'
+      - '--label=org.opencontainers.image.revision={{.FullCommit}}'
+      - '--label=org.opencontainers.image.version={{.Version}}'
+      - '--platform=linux/arm64'
+
+docker_manifests:
+  # basic
+  - name_template: 'foomo/{{.ProjectName}}:latest'
+    image_templates:
+      - 'foomo/{{.ProjectName}}:latest-amd64'
+      - 'foomo/{{.ProjectName}}:latest-arm64'
+    skip_push: auto
+
+  - name_template: 'foomo/{{.ProjectName}}:{{ .Version }}'
+    image_templates:
+      - 'foomo/{{.ProjectName}}:{{ .Version }}-amd64'
+      - 'foomo/{{.ProjectName}}:{{ .Version }}-arm64'
+
+  - name_template: 'foomo/{{.ProjectName}}:{{ .Major }}'
+    image_templates:
+      - 'foomo/{{.ProjectName}}:{{ .Major }}-amd64'
+      - 'foomo/{{.ProjectName}}:{{ .Major }}-arm64'
+    skip_push: auto
+
+  - name_template: 'foomo/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}'
+    image_templates:
+      - 'foomo/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}-amd64'
+      - 'foomo/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}-arm64'
+    skip_push: auto

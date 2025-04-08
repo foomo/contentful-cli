@@ -1,0 +1,36 @@
+name: Release Tag
+
+on:
+  push:
+    tags:
+      - v*.*.*
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-qemu-action@v3
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
+        with:
+         username: ${{ secrets.DOCKERHUB_USERNAME }}
+         password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804
+        id: meta
+        with:
+          images: foomo/${{ github.repository }}
+
+      - uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4
+        with:
+          file: ./Dockerfile
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
