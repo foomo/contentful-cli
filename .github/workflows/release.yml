@@ -24,7 +24,7 @@ jobs:
       - uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804
         id: meta
         with:
-          images: foomo/${{ github.repository }}
+          images: ${{ github.repository }}
 
       - uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4
         with:
