@@ -1,6 +1,6 @@
-FROM node:22.14.0-alpine3.21
+FROM node:22.15.0-alpine
 
-RUN npm install -g contentful-cli@3.8.5
+RUN npm install -g contentful-cli@3.9.5
 
 USER node
 
